@@ -8,6 +8,8 @@ import { getHistory } from '../controllers/urlControllers/getHistory.js';
 import { generateShortUrl } from '../controllers/urlControllers/generateShortUrl.js';
 import { exportGeneratedUrls } from '../controllers/urlControllers/exportGeneratedUrls.js';
 import { generateCustomUrl } from '../controllers/urlControllers/generateCustomUrl.js';
+import { setCustomDomain } from '../controllers/urlControllers/setCustomDomain.js';
+import { verifyCustomDomain } from '../controllers/urlControllers/verifyCustomDomain.js';
 import { validateUrl } from '../validators/urlValidator.js';
 
 import { isApiAuthenticated } from '../middlewares/authMiddleware.js';
@@ -38,5 +40,11 @@ router.get('/export', isApiAuthenticated, exportGeneratedUrls);
 router.get('/url/filter/:category', isApiAuthenticated, getFilteredCategory);
 
 router.put('/url/filter', isApiAuthenticated, updateCategory);
+
+router.post('/url/setdomain', isApiAuthenticated, setCustomDomain);
+
+router.post('/url/verifydomain', isApiAuthenticated, verifyCustomDomain);
+
+
 
 export default router;

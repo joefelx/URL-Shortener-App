@@ -1,4 +1,5 @@
 import UrlModel from '../../models/UrlModel.js';
+import CustomDomainModel from '../../models/CustomDomainModel.js';
 import { nanoid } from 'nanoid';
 import { SHORT_URL_PREFIX } from '../../extras/Constants.js';
 
@@ -34,12 +35,25 @@ export const generateShortUrl = async (req, res) => {
       await myModel.save();
     }
 
-    // Send response with the generated short URL
-    // value of SHORT_URL_PREFIX is http://localhost:4001/u/ and for production : https://dturl.live/u/
-    res.status(200).json({
-      shortUrl: `${SHORT_URL_PREFIX}${id}`,
-      customUrl: `${SHORT_URL_PREFIX}${customId}`,
-    });
+    // Checking for the Custom Domain from DB 
+    const customDomain = await CustomDomainModel.findOne({ userId: userId });
+
+    // Verifing wheather the CustomDomain is verified or selected
+    if (customDomain && customDomain.verified && customDomain.selected) {
+      res.status(200).json({
+        shortUrl: `https://${customDomain.domain}/u/${id}`,
+        customUrl: `https://${customDomain.domain}/u/${customId}`,
+      });
+
+    } else {
+      // Send response with the generated short URL
+      // value of SHORT_URL_PREFIX is http://localhost:4001/u/ and for production : https://dturl.live/u/
+
+      res.status(200).json({
+        shortUrl: `${SHORT_URL_PREFIX}${id}`,
+        customUrl: `${SHORT_URL_PREFIX}${customId}`,
+      });
+    }
   } catch (error) {
     console.error(error);
     if (error.code === 11000) {
